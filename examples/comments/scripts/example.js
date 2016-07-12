@@ -14,7 +14,6 @@
  *       - comment
  *   - CommentForm
  */
-
 var Comment = React.createClass({
     rawMarkup: function() {
         var rawMarkup = marked(this.props.children[1], {
@@ -26,15 +25,13 @@ var Comment = React.createClass({
     },
 
     render: function() {
-        return ( < div className = "comment" >
-            < h2 className = "commentAuthor" > {
-                this.props.author
-            } < /h2> < span dangerouslySetInnerHTML = {
-            this.rawMarkup()
-        }
-        /> < /div >
-    );
-}
+        return ( 
+            <div className="comment">
+               <h2 className="commentAuthor"> {this.props.author} </h2>
+               <span dangerouslySetInnerHTML = {this.rawMarkup()} />
+            </div>
+        );
+    }
 });
 
 var CommentBox = React.createClass({
@@ -91,16 +88,14 @@ var CommentBox = React.createClass({
         setInterval(this.loadCommentsFromServer, this.props.pollInterval);
     },
     render: function() {
-        return ( < div className = "commentBox" >
-            < h1 > Comments < /h1> < CommentList data = {
-            this.state.data
-        }
-        /> < CommentForm onCommentSubmit = {
-        this.handleCommentSubmit
+        return ( 
+            <div className="commentBox">
+               <h1>Comments</h1> 
+               <CommentList data = {this.state.data} /> 
+               <CommentForm onCommentSubmit = {this.handleCommentSubmit} /> 
+            </div>
+        );
     }
-    /> < /div >
-);
-}
 });
 
 var CommentList = React.createClass({
@@ -156,37 +151,17 @@ var CommentList = React.createClass({
                 });
             },
             render: function() {
-                return ( < form className = "commentForm"
-                    onSubmit = {
-                        this.handleSubmit
-                    } >
-                    < input type = "text"
-                    placeholder = "Your name"
-                    value = {
-                        this.state.author
-                    }
-                    onChange = {
-                        this.handleAuthorChange
-                    }
-                    /> < input type = "text"
-                    placeholder = "Say something..."
-                    value = {
-                        this.state.text
-                    }
-                    onChange = {
-                        this.handleTextChange
-                    }
-                    /> < input type = "submit"
-                    value = "Post" / >
-                    < /form>
+                return ( 
+                <form className = "commentForm" onSubmit = {this.handleSubmit} >
+                    <input type = "text" placeholder = "Your name" value = {this.state.author} onChange = {this.handleAuthorChange} /> 
+                    <input type = "text" placeholder = "Say something..." value = {this.state.text} onChange = {this.handleTextChange}/>
+                    <input type = "submit" value = "Post" />
+                </form>
                 );
             }
         });
 
-        ReactDOM.render( < CommentBox url = "/api/comments"
-            pollInterval = {
-                100000
-            }
-            />,
+        ReactDOM.render(
+            <CommentBox url = "/api/comments" pollInterval = {100000} />,
             document.getElementById('content')
         );
