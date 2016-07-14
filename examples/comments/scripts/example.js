@@ -16,7 +16,7 @@
  */
 var Comment = React.createClass({
     rawMarkup: function() {
-        var rawMarkup = marked(this.props.children[1], {
+        var rawMarkup = marked(this.props.children.toString(), {
             sanitize: true
         });
         return {
