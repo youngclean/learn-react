@@ -1,8 +1,19 @@
 /**
  * 出自react教材 https://devdocs.io/react/docs/tutorial
- *
+ * 提供了
+ * 1、评论列表
+ * 2、提交评论表单
+ * 3、后端请求的钩子
+ * 灵活的特性
+ * 1、提交评论后，快速的显示在界面
+ * 2、在线更新评论
+ * 3、使用Markdown格式化文本
+ * 组件结构
+ * commentBox
+ *   - commentList
+ *       - comment
+ *   - CommentForm
  */
-
 var Comment = React.createClass({
     rawMarkup: function() {
         var rawMarkup = marked(this.props.children[1], {
@@ -14,15 +25,13 @@ var Comment = React.createClass({
     },
 
     render: function() {
-        return ( < div className = "comment" >
-            < h2 className = "commentAuthor" > {
-                this.props.author
-            } < /h2> < span dangerouslySetInnerHTML = {
-            this.rawMarkup()
-        }
-        /> < /div >
-    );
-}
+        return (
+            <div className="comment">
+               <h2 className="commentAuthor"> {this.props.author} </h2>
+               <span dangerouslySetInnerHTML={this.rawMarkup()} />
+            </div>
+        );
+    }
 });
 
 var CommentBox = React.createClass({
@@ -79,102 +88,78 @@ var CommentBox = React.createClass({
         setInterval(this.loadCommentsFromServer, this.props.pollInterval);
     },
     render: function() {
-        return ( < div className = "commentBox" >
-            < h1 > Comments < /h1> < CommentList data = {
-            this.state.data
-        }
-        /> < CommentForm onCommentSubmit = {
-        this.handleCommentSubmit
+        return (
+            <div className="commentBox">
+               <h1>Comments</h1>
+               <CommentList data={this.state.data} />
+               <CommentForm onCommentSubmit={this.handleCommentSubmit} />
+            </div>
+        );
     }
-    /> < /div >
-);
-}
 });
 
 var CommentList = React.createClass({
-            render: function() {
-                var commentNodes = this.props.data.map(function(comment) {
-                    return ( < Comment author = {
-                            comment.author
-                        }
-                        key = {
-                            comment.id
-                        } > {
-                            comment.text
-                        } < /Comment>
-                    );
-                });
-                return ( < div className = "commentList" > {
-                        commentNodes
-                    } < /div>);
-                }
-            });
-
-        var CommentForm = React.createClass({
-            getInitialState: function() {
-                return {
-                    author: '',
-                    text: ''
-                };
-            },
-            handleAuthorChange: function(e) {
-                this.setState({
-                    author: e.target.value
-                });
-            },
-            handleTextChange: function(e) {
-                this.setState({
-                    text: e.target.value
-                });
-            },
-            handleSubmit: function(e) {
-                e.preventDefault();
-                var author = this.state.author.trim();
-                var text = this.state.text.trim();
-                if (!text || !author) {
-                    return;
-                }
-                this.props.onCommentSubmit({
-                    author: author,
-                    text: text
-                });
-                this.setState({
-                    author: '',
-                    text: ''
-                });
-            },
-            render: function() {
-                return ( < form className = "commentForm"
-                    onSubmit = {
-                        this.handleSubmit
-                    } >
-                    < input type = "text"
-                    placeholder = "Your name"
-                    value = {
-                        this.state.author
-                    }
-                    onChange = {
-                        this.handleAuthorChange
-                    }
-                    /> < input type = "text"
-                    placeholder = "Say something..."
-                    value = {
-                        this.state.text
-                    }
-                    onChange = {
-                        this.handleTextChange
-                    }
-                    /> < input type = "submit"
-                    value = "Post" / >
-                    < /form>
-                );
-            }
+    render: function() {
+        var commentNodes=this.props.data.map(function(comment) {
+            return (
+               <Comment author={comment.author} key={comment.id}>
+               {comment.text}
+               </Comment>
+            );
         });
-
-        ReactDOM.render( < CommentBox url = "/api/comments"
-            pollInterval = {
-                100000
-            }
-            />,
-            document.getElementById('content')
+        return (
+           <div className="commentList">
+           {commentNodes}
+           </div>
         );
+    }
+});
+
+var CommentForm = React.createClass({
+    getInitialState: function() {
+        return {
+            author: '',
+            text: ''
+        };
+    },
+    handleAuthorChange: function(e) {
+        this.setState({
+            author: e.target.value
+        });
+    },
+    handleTextChange: function(e) {
+        this.setState({
+            text: e.target.value
+        });
+    },
+    handleSubmit: function(e) {
+        e.preventDefault();
+        var author = this.state.author.trim();
+        var text = this.state.text.trim();
+        if (!text || !author) {
+            return;
+        }
+        this.props.onCommentSubmit({
+            author: author,
+            text: text
+        });
+        this.setState({
+            author: '',
+            text: ''
+        });
+    },
+    render: function() {
+        return (
+            <form className="commentForm" onSubmit={this.handleSubmit} >
+                <input type="text" placeholder="Your name" value={this.state.author} onChange={this.handleAuthorChange} />
+                <input type="text" placeholder="Say something..." value={this.state.text} onChange={this.handleTextChange}/>
+                <input type="submit" value="Post" />
+            </form>
+        );
+    }
+});
+
+ReactDOM.render(
+    <CommentBox url="/api/comments" pollInterval={100000} />,
+    document.getElementById('content')
+);
