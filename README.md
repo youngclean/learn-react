@@ -35,7 +35,7 @@ ReactDOM.render(root,document.getElementById('example'));
 
 
 使用React JSX,会简单方便很多
-var root = <ul className="my-lst">
+```var root = <ul className="my-lst">
                 <li>Text Content</li>
-            </ul>;
+            </ul>;```
 ReactDOM.render(root,document.getElementById('example'));
