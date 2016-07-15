@@ -48,3 +48,32 @@ var root = <ul className="my-lst">
             </ul>;
 ReactDOM.render(root,document.getElementById('example'));
 ```
+
+------
+
+**Factories**
+ReactElement-factory只是一个函数,生成一个带 type的ReactElement。
+
+```
+function createFactory(type) {
+  return React.createElement.bind(null, type);
+}
+```
+
+它允许你创建一个方便快捷而不用一直输入 React.createElement(div)
+
+```
+var div = React.createFactory('div');
+var root = div({ className: 'my-div' });
+ReactDOM.render(root, document.getElementById('example'));
+```
+
+React有内置的factories为常用的html标签
+
+```
+var root = React.DOM.ul({ className: 'my-list' },
+             React.DOM.li(null, 'Text Content')
+           );
+```
+
+如果使用JSX，就没有必要使用factories。JSX同样提供快速便捷的方式来创建ReactElement。
