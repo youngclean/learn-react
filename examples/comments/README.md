@@ -24,6 +24,8 @@
       - comment
   - CommentForm
 
+在app.js配置：/api/comments
+
 出自react教材 https://devdocs.io/react/docs/tutorial
 
 

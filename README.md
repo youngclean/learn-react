@@ -6,6 +6,8 @@ React入门学习
 
 examples中是每一个小示例。
 
+files记录React的文档资料或笔记。
+
 
 
 

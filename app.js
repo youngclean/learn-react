@@ -4,14 +4,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var app = express();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: false
 }));
-
 app.use(express.static(path.join(__dirname, 'public')));
-
 var COMMENTS_FILE = path.join(__dirname, 'learn-react/examples/comments/data/comments.json');
 //console.log(COMMENTS_FILE);
 app.get('/api/comments', function(req, res) {
@@ -24,7 +21,6 @@ app.get('/api/comments', function(req, res) {
         res.json(JSON.parse(data));
     });
 });
-
 app.post('/api/comments', function(req, res) {
     // console.log(req.body);
     fs.readFile(COMMENTS_FILE, function(err, data) {
@@ -51,5 +47,4 @@ app.post('/api/comments', function(req, res) {
         });
     });
 });
-
 module.exports = app;
