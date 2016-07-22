@@ -1,6 +1,7 @@
 #  构建一个具备搜索功能的产品列表
 
 组件架构
+
 product box  整个容器
 - search input box 搜索输入框
 - product list 搜索结果列表

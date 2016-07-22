@@ -4,47 +4,80 @@ var ProductBox = React.createClass({
             <div className="product-box">
                <SearchInputBox onSearchSumbit={this.handleSubmit}/>
                <ProductListHead />
-               <div id="productList"></div>
+               <ProductListBox data={this.state.data} isSearch={this.state.isSearch}/>
             </div>
         );
     },
     handleSubmit: function(param) {
+        if (param.kw == '') {
+            this.componentDidMount();
+            return;
+        }
         $.ajax({
             url: this.props.url,
             dataType: 'json',
-            // type: 'POST',
+            type: 'POST',
             data: param,
             success: function(data) {
-                ReactDOM.render(<ProductListBox data={data} />,
-                    document.getElementById('productList')
-                );
+                this.setState({
+                    data: data,
+                    isSearch: true
+                });
             }.bind(this),
             error: function(xhr, status, err) {
                 console.error(this.props.url, status, err.toString());
             }.bind(this)
         });
-
+    },
+    getInitialState: function() {
+        return {
+            data: [],
+            isSearch: false
+        };
+    },
+    componentDidMount: function() {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({
+                    data: data,
+                    isSearch: false
+                });
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
     }
 });
 var SearchInputBox = React.createClass({
     getInitialState: function() {
         return {
-            stocked: false
+            stocked: 0,
+            kw: ''
         };
     },
     handleChange: function(e) {
         var kw = e.target.value.trim();
-        if (kw == '') {
-            return;
-        }
+        this.setState({
+            kw: kw
+        });
         this.props.onSearchSumbit({
             kw: kw,
             stocked: this.state.stocked
         });
     },
     handleCheck: function(e) {
+        var checked = e.target.checked ? 1 : 0;
         this.setState({
-            stocked: e.target.checked
+            stocked: checked
+        });
+
+        this.props.onSearchSumbit({
+            kw: this.state.kw,
+            stocked: checked
         });
     },
     render: function() {
@@ -60,18 +93,27 @@ var SearchInputBox = React.createClass({
 });
 var ProductListBox = React.createClass({
     render: function() {
-        console.log(this.props.data);
-        var productNodes = this.props.data.map(function(item) {
+        var datas = this.props.data;
+        var len = datas.length;
+        var productNodes = datas.map(function(item) {
             return (
                 <Product data={item} />
             );
         });
-        return (
-            <div className="product-list">
-           {productNodes}
-           </div>
-        );
-
+        if (this.props.isSearch) {
+            return (
+                <div className="product-list">
+                   <p>搜索结果：{len}</p>
+                   {productNodes}
+                </div>
+            );
+        } else {
+            return (
+                <div className="product-list">
+                   {productNodes}
+                </div>
+            )
+        }
     }
 });
 var ProductListHead = React.createClass({
@@ -98,6 +140,6 @@ var Product = React.createClass({
     }
 });
 ReactDOM.render(
-    <ProductBox url="/search"/>,
+    <ProductBox url="/api/search"/>,
     document.getElementById('content')
 );
