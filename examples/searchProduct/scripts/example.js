@@ -9,10 +9,10 @@ var ProductBox = React.createClass({
         );
     },
     handleSubmit: function(param) {
-        if (param.kw == '') {
-            this.componentDidMount();
-            return;
-        }
+        // if (param.kw == '') {
+        //     this.componentDidMount(param);
+        //     return;
+        // }
         $.ajax({
             url: this.props.url,
             dataType: 'json',
@@ -83,7 +83,7 @@ var SearchInputBox = React.createClass({
     render: function() {
         return (
             <div className="search-box">
-                <input type="text" placeholder="Search..." className="search-input" onBlur={this.handleChange}/>
+                <input type="text" placeholder="Search..." className="search-input" onInput={this.handleChange}/>
                 <label className="search-tip">
                     <input type="checkbox" onClick={this.handleCheck}/>Only show products in stock
                 </label>
@@ -95,22 +95,26 @@ var ProductListBox = React.createClass({
     render: function() {
         var datas = this.props.data;
         var len = datas.length;
-        var productNodes = datas.map(function(item) {
-            return (
-                <Product data={item} />
-            );
+        var rows = [];
+        var lastCategory = null;
+        datas.map(function(item) {
+            if (item.category !== lastCategory) {
+                rows.push(<ProductCategoryRow category={item.category} />);
+            }
+            rows.push(<Product data={item} />);
+            lastCategory = item.category;
         });
         if (this.props.isSearch) {
             return (
                 <div className="product-list">
                    <p>搜索结果：{len}</p>
-                   {productNodes}
+                   {rows}
                 </div>
             );
         } else {
             return (
                 <div className="product-list">
-                   {productNodes}
+                   {rows}
                 </div>
             )
         }
@@ -128,14 +132,20 @@ var ProductListHead = React.createClass({
 var Product = React.createClass({
     render: function() {
         var data = this.props.data;
+        var name = data.stocked ? data.name : <span style={{color: 'red'}}>{data.name}</span>;
         return (
-            <div>
-                <p>{data.category}</p>
-                <p>
-                    <span>{data.name}</span>
-                    <span>{data.price}</span>
-                </p>
+            <div className="row">
+                <span>{name}</span>
+                <span>{data.price}</span>
             </div>
+        );
+    }
+});
+var ProductCategoryRow = React.createClass({
+    render: function() {
+        var data = this.props.category;
+        return (
+            <p className="category">{data}</p>
         );
     }
 });

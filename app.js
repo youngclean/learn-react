@@ -70,15 +70,25 @@ router.route('/search')
             }
             var result = JSON.parse(data);
             var arr = [];
+            var arr1 = [];
             result.forEach(function(d, i) {
-                if (d.stocked == stocked && d.name.indexOf(keyword) > -1) {
-                    arr.push(d);
+                if (d.stocked == stocked) {
+                    if (d.name.indexOf(keyword) > -1) {
+                        arr.push(d);
+                    }
+                    if (keyword == '') {
+                        arr1.push(d);
+                    }
                 }
             });
-
-            res.json(arr);
+            if (keyword == '') {
+                res.json(arr1);
+            } else {
+                res.json(arr);
+            }
         });
-    }).get(function(req, res) {
+    })
+    .get(function(req, res) {
         fs.readFile(SEARCHPRODUCT_FILE, function(err, data) {
             if (err) {
                 console.error(err);
